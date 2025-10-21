@@ -13,19 +13,18 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/AthleteTitle"
+            android:id="@+id/athleteName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:textSize="30sp"
-            tools:text="A Title" />
+            tools:text="A Name" />
 
         <TextView
-            android:id="@+id/description"
+            android:id="@+id/athleteNotes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/AthleteTitle"
-            tools:text="A Description" />
-
+            android:layout_below="@id/athleteName"
+            tools:text="A Note" />
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

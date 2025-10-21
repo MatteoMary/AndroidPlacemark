@@ -43,7 +43,7 @@ class AthleteListActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.item_add -> {
-                val launcherIntent = Intent(this, `AthleteActivity.kt`::class.java)
+                val launcherIntent = Intent(this, AthleteActivity::class.java)
                 getResult.launch(launcherIntent)
             }
         }
