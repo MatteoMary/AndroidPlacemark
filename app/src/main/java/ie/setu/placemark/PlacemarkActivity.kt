@@ -1,4 +1,4 @@
-package org.wit.placemark
+package ie.setu.placemark
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

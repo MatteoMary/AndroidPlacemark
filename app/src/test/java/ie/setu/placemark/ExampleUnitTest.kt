@@ -1,4 +1,4 @@
-package org.wit.placemark
+package ie.setu.placemark
 
 import org.junit.Test
 
