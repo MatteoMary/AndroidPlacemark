@@ -8,7 +8,6 @@ import org.wit.activities.main.MainApp
 import org.wit.activities.models.AthleteModel
 import timber.log.Timber.i
 
-
 class AthleteActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAthleteBinding
@@ -25,7 +24,7 @@ class AthleteActivity : AppCompatActivity() {
 
         i("Athlete Activity started...")
 
-        binding.btnAdd.setOnClickListener() {
+        binding.btnAdd.setOnClickListener {
             athlete.title = binding.athleteName.text.toString()
             athlete.description = binding.athleteNotes.text.toString()
             if (athlete.title.isNotEmpty()) {
@@ -39,9 +38,7 @@ class AthleteActivity : AppCompatActivity() {
                 finish()
             }
             else {
-                Snackbar
-                    .make(it,"Please Enter a title", Snackbar.LENGTH_LONG)
-                    .show()
+                Snackbar.make(it,"Please Enter a title", Snackbar.LENGTH_LONG).show()
             }
         }
     }

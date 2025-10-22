@@ -1,11 +1,11 @@
-package org.wit.placemark
+package org.wit.athlete
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import timber.log.Timber
 import timber.log.Timber.i
 
-class PlacemarkActivity : AppCompatActivity() {
+class AthleteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_placemark)
