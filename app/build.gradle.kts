@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "org.wit.placemark"
+    namespace = "org.wit.activities"
     compileSdk = 36
     
     defaultConfig {
-        applicationId = "org.wit.placemark"
+        applicationId = "org.wit.activities"
         minSdk = 30
         targetSdk = 36
         versionCode = 1
@@ -32,6 +32,10 @@ android {
     }
     kotlin {
         jvmToolchain(17)
+    }
+    
+    buildFeatures {
+        viewBinding = true
     }
 }
 

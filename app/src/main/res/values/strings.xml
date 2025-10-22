@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">Placemark</string>
+    <string name="app_name">Athlete</string>
+    <string name="button_addAthlete">Add Athlete</string>
+    <string name="hint_AthleteTitle">Athlete Title</string>
+    <string name="hint_AthleteDescription">Description </string>
+    <string name="menu_addAthlete">Add</string>
 </resources>
