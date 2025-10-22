@@ -26,7 +26,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".activities.AthleteActivity">
+            android:name="org.wit.activities.activities.AthleteActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

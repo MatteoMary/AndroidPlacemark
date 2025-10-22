@@ -11,12 +11,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.wit.activities.R
+import org.wit.activities.adapters.AthleteListener
 import org.wit.activities.databinding.ActivityAthleteListBinding
 import org.wit.activities.databinding.CardAthleteBinding
 import org.wit.activities.main.MainApp
 import org.wit.activities.models.AthleteModel
 
-class AthleteListActivity : AppCompatActivity() {
+class AthleteListActivity : AppCompatActivity(), AthleteListener {
 
     lateinit var app: MainApp
     private lateinit var binding: ActivityAthleteListBinding
@@ -30,9 +31,8 @@ class AthleteListActivity : AppCompatActivity() {
 
         app = application as MainApp
 
-        val layoutManager = LinearLayoutManager(this)
-        binding.recyclerView.layoutManager = layoutManager
-        binding.recyclerView.adapter = AthleteAdapter(app.athletes)
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = AthleteAdapter(app.athletes.findAll(), this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -55,14 +55,23 @@ class AthleteListActivity : AppCompatActivity() {
             ActivityResultContracts.StartActivityForResult()
         ) {
             if (it.resultCode == RESULT_OK) {
-                (binding.recyclerView.adapter)?.
-                notifyItemRangeChanged(0, app.athletes.size)
+                // Rebind with fresh data from the store
+                binding.recyclerView.adapter = AthleteAdapter(app.athletes.findAll(), this)
+                // or: (binding.recyclerView.adapter as? AthleteAdapter)?.notifyDataSetChanged()
             }
         }
+
+    override fun onAthleteClick(athlete: AthleteModel) {
+        val launcherIntent = Intent(this, AthleteActivity::class.java)
+        launcherIntent.putExtra("athlete_edit", athlete)
+        getResult.launch(launcherIntent)
+    }
 }
 
-class AthleteAdapter(private var athletes: List<AthleteModel>) :
-    RecyclerView.Adapter<AthleteAdapter.MainHolder>() {
+class AthleteAdapter(
+    private var athletes: List<AthleteModel>,
+    private val listener: AthleteListener
+) : RecyclerView.Adapter<AthleteAdapter.MainHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
         val binding = CardAthleteBinding
@@ -72,8 +81,8 @@ class AthleteAdapter(private var athletes: List<AthleteModel>) :
     }
 
     override fun onBindViewHolder(holder: MainHolder, position: Int) {
-        val athlete = athletes[holder.adapterPosition]
-        holder.bind(athlete)
+        val athlete = athletes[holder.bindingAdapterPosition]
+        holder.bind(athlete, listener)
     }
 
     override fun getItemCount(): Int = athletes.size
@@ -81,9 +90,10 @@ class AthleteAdapter(private var athletes: List<AthleteModel>) :
     class MainHolder(private val binding: CardAthleteBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(athlete: AthleteModel) {
+        fun bind(athlete: AthleteModel, listener: AthleteListener) {
             binding.athleteName.text = athlete.title
             binding.athleteNotes.text = athlete.description
+            binding.root.setOnClickListener { listener.onAthleteClick(athlete) }
         }
     }
 }

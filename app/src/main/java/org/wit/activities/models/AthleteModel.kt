@@ -1,4 +1,11 @@
 package org.wit.activities.models
 
-data class AthleteModel(var title: String = "",
-                          var description: String = "")
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+data class AthleteModel(
+    var id: Long = 0,
+    var title: String = "",
+    var description: String = ""
+) : Parcelable

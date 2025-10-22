@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">Athlete</string>
     <string name="button_addAthlete">Add Athlete</string>
+    <string name="button_saveAthlete">Save Athlete</string>
     <string name="hint_AthleteTitle">Athlete Title</string>
     <string name="hint_AthleteDescription">Description </string>
     <string name="menu_addAthlete">Add</string>
+    <string name="menu_cancelAthlete">Cancel</string>
+    <string name="err_enter_name">Please enter a name</string>
 </resources>
