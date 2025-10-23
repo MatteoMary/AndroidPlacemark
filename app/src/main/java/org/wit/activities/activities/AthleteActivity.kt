@@ -13,9 +13,8 @@ import org.wit.activities.models.AthleteModel
 
 class AthleteActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAthleteBinding
-    var athlete = AthleteModel()
-    lateinit var app: MainApp
-
+    private var athlete = AthleteModel()
+    private lateinit var app: MainApp
     private var isEdit = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +29,10 @@ class AthleteActivity : AppCompatActivity() {
         val roleAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, roles)
         binding.roleDropdown.setAdapter(roleAdapter)
 
+        binding.roleDropdown.setOnItemClickListener { _, _, pos, _ ->
+            athlete.role = roles[pos]
+        }
+
         if (intent.hasExtra("athlete_edit")) {
             isEdit = true
             athlete = intent.extras?.getParcelable("athlete_edit")!!
@@ -38,20 +41,34 @@ class AthleteActivity : AppCompatActivity() {
             binding.roleDropdown.setText(athlete.role, false)
             binding.btnAdd.text = getString(R.string.button_saveAthlete)
         } else {
+            athlete.role = ""
             binding.btnAdd.text = getString(R.string.button_addAthlete)
         }
 
         binding.btnAdd.setOnClickListener {
-            athlete.title = binding.athleteName.text.toString()
-            athlete.description = binding.athleteNotes.text.toString()
-            athlete.role = binding.roleDropdown.text.toString()
+            val name = binding.athleteName.text?.toString()?.trim().orEmpty()
+            val notes = binding.athleteNotes.text?.toString()?.trim().orEmpty()
+            val pickedRole = binding.roleDropdown.text?.toString()?.trim().orEmpty()
 
-            if (athlete.title.isEmpty()) {
+            if (name.isEmpty()) {
                 Snackbar.make(it, getString(R.string.err_enter_name), Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
-            if (isEdit) app.athletes.update(athlete) else app.athletes.create(athlete)
+            athlete.title = name
+            athlete.description = notes
+
+            athlete.role = when {
+                pickedRole.isNotEmpty() -> pickedRole
+                athlete.role.isNotEmpty() -> athlete.role
+                else -> "All-rounder"
+            }
+
+            if (isEdit) {
+                app.athletes.update(athlete)
+            } else {
+                app.athletes.create(athlete)
+            }
             setResult(RESULT_OK)
             finish()
         }
@@ -59,18 +76,11 @@ class AthleteActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
-        menu.findItem(R.id.item_delete)?.isVisible = isEdit
-        return true
+        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.item_delete -> {
-                app.athletes.delete(athlete)
-                setResult(RESULT_OK); finish(); true
-            }
-            R.id.item_cancel -> { finish(); true }
-            else -> super.onOptionsItemSelected(item)
-        }
+        if (item.itemId == R.id.item_cancel) finish()
+        return super.onOptionsItemSelected(item)
     }
 }

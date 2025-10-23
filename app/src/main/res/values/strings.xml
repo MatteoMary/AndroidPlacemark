@@ -7,4 +7,5 @@
     <string name="menu_addAthlete">Add</string>
     <string name="menu_cancelAthlete">Cancel</string>
     <string name="err_enter_name">Please enter a name</string>
+    <string name="role">Role</string>
 </resources>

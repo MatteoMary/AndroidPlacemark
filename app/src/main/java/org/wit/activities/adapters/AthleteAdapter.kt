@@ -36,6 +36,7 @@ private val listener: AthleteListener
         fun bind(athlete: AthleteModel, listener: AthleteListener) {
             binding.athleteName.text = athlete.title
             binding.athleteNotes.text = athlete.description
+            binding.athleteRole.text = athlete.role
 
             binding.root.setOnClickListener {
                 listener.onAthleteClick(athlete)
