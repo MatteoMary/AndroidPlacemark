@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import org.wit.activities.databinding.CardAthleteBinding
 import org.wit.activities.models.AthleteModel
-
+import androidx.recyclerview.widget.ItemTouchHelper
 interface AthleteListener {
     fun onAthleteClick(athlete: AthleteModel)
 }
@@ -20,6 +20,8 @@ private val listener: AthleteListener
             .inflate(LayoutInflater.from(parent.context), parent, false)
         return MainHolder(binding)
     }
+
+    fun getItem(position: Int): AthleteModel = athletes[position]
 
     override fun onBindViewHolder(holder: MainHolder, position: Int) {
         val athlete = athletes[holder.adapterPosition]

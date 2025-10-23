@@ -59,13 +59,18 @@ class AthleteActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
-        return super.onCreateOptionsMenu(menu)
+        menu.findItem(R.id.item_delete)?.isVisible = isEdit
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.item_cancel -> finish()
+        return when (item.itemId) {
+            R.id.item_delete -> {
+                app.athletes.delete(athlete)
+                setResult(RESULT_OK); finish(); true
+            }
+            R.id.item_cancel -> { finish(); true }
+            else -> super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
 }
