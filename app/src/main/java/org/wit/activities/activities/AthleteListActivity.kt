@@ -1,13 +1,14 @@
 package org.wit.activities.activities
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.wit.activities.R
@@ -26,28 +27,36 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
         super.onCreate(savedInstanceState)
         binding = ActivityAthleteListBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.toolbar.title = title
+
         setSupportActionBar(binding.toolbar)
 
         app = application as MainApp
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = AthleteAdapter(app.athletes.findAll(), this)
+        toggleEmptyState()
+
+        binding.fabAddAthlete.setOnClickListener {
+            val intent = Intent(this, AthleteActivity::class.java)
+            getResult.launch(intent)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
-        return super.onCreateOptionsMenu(menu)
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.item_add -> {
-                val launcherIntent = Intent(this, AthleteActivity::class.java)
-                getResult.launch(launcherIntent)
+                val intent = Intent(this, AthleteActivity::class.java)
+                getResult.launch(intent)
+                true
             }
+            R.id.item_cancel -> true
+            else -> super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
 
     private val getResult =
@@ -55,16 +64,21 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
             ActivityResultContracts.StartActivityForResult()
         ) {
             if (it.resultCode == RESULT_OK) {
-                // Rebind with fresh data from the store
                 binding.recyclerView.adapter = AthleteAdapter(app.athletes.findAll(), this)
-                // or: (binding.recyclerView.adapter as? AthleteAdapter)?.notifyDataSetChanged()
+                toggleEmptyState()
             }
         }
 
     override fun onAthleteClick(athlete: AthleteModel) {
-        val launcherIntent = Intent(this, AthleteActivity::class.java)
-        launcherIntent.putExtra("athlete_edit", athlete)
-        getResult.launch(launcherIntent)
+        val intent = Intent(this, AthleteActivity::class.java)
+        intent.putExtra("athlete_edit", athlete)
+        getResult.launch(intent)
+    }
+
+    private fun toggleEmptyState() {
+        val empty = app.athletes.findAll().isEmpty()
+        binding.emptyState.visibility = if (empty) View.VISIBLE else View.GONE
+        binding.recyclerView.visibility = if (empty) View.GONE else View.VISIBLE
     }
 }
 
@@ -74,9 +88,9 @@ class AthleteAdapter(
 ) : RecyclerView.Adapter<AthleteAdapter.MainHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
-        val binding = CardAthleteBinding
-            .inflate(LayoutInflater.from(parent.context), parent, false)
-
+        val binding = CardAthleteBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
         return MainHolder(binding)
     }
 
@@ -93,6 +107,7 @@ class AthleteAdapter(
         fun bind(athlete: AthleteModel, listener: AthleteListener) {
             binding.athleteName.text = athlete.title
             binding.athleteNotes.text = athlete.description
+            binding.athleteRole.text = athlete.role
             binding.root.setOnClickListener { listener.onAthleteClick(athlete) }
         }
     }

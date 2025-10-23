@@ -7,5 +7,6 @@ import kotlinx.parcelize.Parcelize
 data class AthleteModel(
     var id: Long = 0,
     var title: String = "",
-    var description: String = ""
+    var description: String = "",
+    var role: String = "All-rounder"
 ) : Parcelable
