@@ -27,6 +27,7 @@ class AthleteMemStore : AthleteStore {
         if (foundAthlete != null) {
             foundAthlete.title = athlete.title
             foundAthlete.description = athlete.description
+            foundAthlete.role = athlete.role
             logAll()
         }
     }
