@@ -4,4 +4,5 @@ interface AthleteStore {
     fun findAll(): List<AthleteModel>
     fun create(athlete: AthleteModel)
     fun update(athlete: AthleteModel)
+    fun delete(athlete: AthleteModel)
 }

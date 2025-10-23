@@ -9,9 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import org.wit.activities.R
+import org.wit.activities.adapters.AthleteAdapter
 import org.wit.activities.adapters.AthleteListener
 import org.wit.activities.databinding.ActivityAthleteListBinding
 import org.wit.activities.databinding.CardAthleteBinding
@@ -40,6 +43,25 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
             val intent = Intent(this, AthleteActivity::class.java)
             getResult.launch(intent)
         }
+
+        val itemTouchHelper = ItemTouchHelper(object :
+            ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ) = false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val adapter = binding.recyclerView.adapter as AthleteAdapter
+                val athlete = adapter.getItem(viewHolder.bindingAdapterPosition)
+                app.athletes.delete(athlete)
+                binding.recyclerView.adapter = AthleteAdapter(app.athletes.findAll(), this@AthleteListActivity)
+                toggleEmptyState()
+                Snackbar.make(binding.root, "Athlete deleted", Snackbar.LENGTH_SHORT).show()
+            }
+        })
+        itemTouchHelper.attachToRecyclerView(binding.recyclerView)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -79,36 +101,5 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
         val empty = app.athletes.findAll().isEmpty()
         binding.emptyState.visibility = if (empty) View.VISIBLE else View.GONE
         binding.recyclerView.visibility = if (empty) View.GONE else View.VISIBLE
-    }
-}
-
-class AthleteAdapter(
-    private var athletes: List<AthleteModel>,
-    private val listener: AthleteListener
-) : RecyclerView.Adapter<AthleteAdapter.MainHolder>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
-        val binding = CardAthleteBinding.inflate(
-            LayoutInflater.from(parent.context), parent, false
-        )
-        return MainHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: MainHolder, position: Int) {
-        val athlete = athletes[holder.bindingAdapterPosition]
-        holder.bind(athlete, listener)
-    }
-
-    override fun getItemCount(): Int = athletes.size
-
-    class MainHolder(private val binding: CardAthleteBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(athlete: AthleteModel, listener: AthleteListener) {
-            binding.athleteName.text = athlete.title
-            binding.athleteNotes.text = athlete.description
-            binding.athleteRole.text = athlete.role
-            binding.root.setOnClickListener { listener.onAthleteClick(athlete) }
-        }
     }
 }

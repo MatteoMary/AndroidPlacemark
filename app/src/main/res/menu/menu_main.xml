@@ -13,4 +13,11 @@
         android:title="Cancel"
         android:icon="@android:drawable/ic_menu_close_clear_cancel"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/item_delete"
+        android:title="Delete"
+        android:icon="@android:drawable/ic_menu_delete"
+        app:showAsAction="always" />
+
 </menu>

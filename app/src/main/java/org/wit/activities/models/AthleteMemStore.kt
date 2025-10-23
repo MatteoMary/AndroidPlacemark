@@ -32,6 +32,10 @@ class AthleteMemStore : AthleteStore {
         }
     }
 
+    override fun delete(athlete: AthleteModel) {
+        athletes.removeIf { it.id == athlete.id }
+        logAll()
+    }
     private fun logAll() {
         athletes.forEach { i("$it") }
     }
