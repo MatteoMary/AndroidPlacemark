@@ -35,9 +35,13 @@ class AthleteJSONStore(private val context: Context) : AthleteStore {
     override fun update(athlete: AthleteModel) {
         val found = athletes.find { it.id == athlete.id }
         if (found != null) {
-            found.title = athlete.title
+            found.name = athlete.name
             found.description = athlete.description
             found.role = athlete.role
+            found.group = athlete.group
+            found.personalBest = athlete.personalBest
+            found.country = athlete.country
+            found.isActive = athlete.isActive
             serialize()
         }
     }

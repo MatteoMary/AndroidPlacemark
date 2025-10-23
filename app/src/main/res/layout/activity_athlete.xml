@@ -26,44 +26,95 @@
                 style="@style/Widget.TextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_AthleteTitle">
-
+                android:hint="Name">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/athleteName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLength="40"/>
+                    android:maxLength="60"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.TextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_AthleteDescription"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="12dp"
+                android:hint="@string/hint_AthleteDescription">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/athleteNotes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLines="4"/>
+                    android:maxLines="4" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.TextInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/role"
                 android:layout_marginTop="12dp"
+                android:hint="Role"
                 app:endIconMode="dropdown_menu">
-
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/roleDropdown"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:completionThreshold="0"/>
+                    android:completionThreshold="0"
+                    android:inputType="none"/>
             </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.TextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="Group"
+                app:endIconMode="dropdown_menu">
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/groupDropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:completionThreshold="0"
+                    android:inputType="none"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.TextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="Personal Best">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/athletePB"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.TextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="Country"
+                app:endIconMode="dropdown_menu">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/countryDropdown"
+                    android:layout_width="978dp"
+                    android:layout_height="wrap_content"
+                    android:completionThreshold="0"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switchActive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Active athlete"
+                android:checked="true"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAdd"

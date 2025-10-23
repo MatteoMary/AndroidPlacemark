@@ -34,13 +34,15 @@ private val listener: AthleteListener
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(athlete: AthleteModel, listener: AthleteListener) {
-            binding.athleteName.text = athlete.title
+            binding.athleteName.text = athlete.name
             binding.athleteNotes.text = athlete.description
             binding.athleteRole.text = athlete.role
-
-            binding.root.setOnClickListener {
-                listener.onAthleteClick(athlete)
-            }
+            binding.athleteGroup.text = athlete.group
+            binding.athleteCountry.text = athlete.country
+            binding.athletePB.text = if (athlete.personalBest.isNotBlank()) "PB: ${athlete.personalBest}" else ""
+            binding.athleteActive.text = if (athlete.isActive) "Active" else "Inactive"
+            binding.root.setOnClickListener { listener.onAthleteClick(athlete) }
         }
+
     }
 }

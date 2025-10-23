@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -19,26 +20,71 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textSize="18sp"
-            tools:text="Josh Kerr" />
+            tools:text="Ciara Mageean"/>
 
         <TextView
             android:id="@+id/athleteNotes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            tools:text="1500m runner" />
+            tools:text="1500m European Champion"/>
 
-        <TextView
-            android:id="@+id/athleteRole"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="6dp"
-            android:background="@drawable/bg_role_badge"
-            android:textStyle="bold"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:id="@+id/athleteRole"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:alpha="0.9"
+                tools:text="Distance"/>
+
+            <TextView
+                android:id="@+id/athleteGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:alpha="0.9"
+                tools:text="Senior"/>
+
+            <TextView
+                android:id="@+id/athleteCountry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:alpha="0.9"
+                tools:text="Ireland"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/athletePB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
             android:textSize="12sp"
-            android:alpha="0.85"
-            tools:text="All-rounder" />
+            tools:text="PB: 3:55.87 1500m"/>
+
+        <TextView
+            android:id="@+id/athleteActive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textSize="12sp"
+            tools:text="Active"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

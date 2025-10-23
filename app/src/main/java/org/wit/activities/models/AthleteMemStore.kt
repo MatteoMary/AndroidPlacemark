@@ -25,7 +25,7 @@ class AthleteMemStore : AthleteStore {
     override fun update(athlete: AthleteModel) {
         var foundAthlete: AthleteModel? = athletes.find { p -> p.id == athlete.id }
         if (foundAthlete != null) {
-            foundAthlete.title = athlete.title
+            foundAthlete.name = athlete.name
             foundAthlete.description = athlete.description
             foundAthlete.role = athlete.role
             logAll()
