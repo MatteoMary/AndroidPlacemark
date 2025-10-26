@@ -14,6 +14,6 @@ class MainApp : Application() {
         Timber.plant(Timber.DebugTree())
         Timber.i("Athlete Tracker started")
 
-        athletes = AthleteJSONStore(applicationContext)
+        athletes = AthleteJSONStore(this)
     }
 }
