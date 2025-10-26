@@ -13,6 +13,5 @@ data class AthleteModel(
     var group: String = "",
     var personalBest: String = "",
     var country: String = "",
-    var trainingGroup: String = "",
     var isActive: Boolean = true
 ) : Parcelable
