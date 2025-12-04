@@ -39,7 +39,7 @@ class AthleteJSONStore(private val context: Context) : AthleteStore {
             found.description = athlete.description
             found.role = athlete.role
             found.group = athlete.group
-            found.personalBest = athlete.personalBest
+            found.personalBestSeconds = athlete.personalBestSeconds
             found.country = athlete.country
             found.isActive = athlete.isActive
             serialize()
