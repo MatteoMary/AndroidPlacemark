@@ -46,6 +46,7 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
 
         val itemTouchHelper = ItemTouchHelper(object :
             ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+
             override fun onMove(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -54,14 +55,25 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val adapter = binding.recyclerView.adapter as AthleteAdapter
-                val athlete = adapter.getItem(viewHolder.bindingAdapterPosition)
+                val pos = viewHolder.bindingAdapterPosition
+                val athlete = adapter.getItem(pos)
+
                 app.athletes.delete(athlete)
+
                 binding.recyclerView.adapter = AthleteAdapter(app.athletes.findAll(), this@AthleteListActivity)
                 toggleEmptyState()
-                Snackbar.make(binding.root, "Athlete deleted", Snackbar.LENGTH_SHORT).show()
+
+                Snackbar.make(binding.root, "Deleted ${athlete.name}", Snackbar.LENGTH_LONG)
+                    .setAction("UNDO") {
+                        app.athletes.create(athlete.copy(id = 0))
+                        binding.recyclerView.adapter = AthleteAdapter(app.athletes.findAll(), this@AthleteListActivity)
+                        toggleEmptyState()
+                    }
+                    .show()
             }
         })
         itemTouchHelper.attachToRecyclerView(binding.recyclerView)
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

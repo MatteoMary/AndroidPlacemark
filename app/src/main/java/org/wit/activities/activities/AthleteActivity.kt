@@ -78,6 +78,17 @@ class AthleteActivity : AppCompatActivity() {
                 Snackbar.make(it, getString(R.string.err_enter_name), Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
+            var ok = true
+
+            val pb = binding.athletePB.text?.toString()?.trim().orEmpty()
+            val pbOk = pb.isEmpty() || Regex(
+                """^(?:\d{1,2}:[0-5]\d:[0-5]\d|[0-5]?\d:[0-5]\d)(?:\s+\d{3,4}m)?$""").matches(pb)
+            if (!pbOk) {
+                binding.athletePBLayout.error = "Use hh:mm:ss or mm:ss (optional distance)"
+                ok = false
+            } else binding.athletePBLayout.error = null
+
+            if (!ok) return@setOnClickListener
 
             athlete.name = name
             athlete.description = binding.athleteNotes.text?.toString()?.trim().orEmpty()
