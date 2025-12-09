@@ -27,6 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Name">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/athleteName"
                     android:layout_width="match_parent"
@@ -55,6 +56,7 @@
                 android:layout_marginTop="12dp"
                 android:hint="Role"
                 app:endIconMode="dropdown_menu">
+
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/roleDropdown"
                     android:layout_width="match_parent"
@@ -70,12 +72,30 @@
                 android:layout_marginTop="12dp"
                 android:hint="Group"
                 app:endIconMode="dropdown_menu">
+
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/groupDropdown"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:completionThreshold="0"
                     android:inputType="none"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.TextInput"
+                android:id="@+id/eventDropdownLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="Select Event"
+                app:endIconMode="dropdown_menu">
+
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/eventDropdown"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:completionThreshold="0"
+                    android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -89,8 +109,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/athletePB"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="" />
+                    android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -103,7 +122,7 @@
 
                 <com.google.android.material.textfield.MaterialAutoCompleteTextView
                     android:id="@+id/countryDropdown"
-                    android:layout_width="978dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:completionThreshold="0"
                     android:inputType="none" />

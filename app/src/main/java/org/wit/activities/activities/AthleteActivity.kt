@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import org.wit.activities.R
+import org.wit.activities.auth.AuthManager
 import org.wit.activities.databinding.ActivityAthleteBinding
 import org.wit.activities.main.MainApp
 import org.wit.activities.models.AthleteModel
@@ -21,6 +22,12 @@ class AthleteActivity : AppCompatActivity() {
 
     private val countryList = Country.values().toList()
     private val countryDisplayNames = countryList.map { it.displayName }
+
+    private val events = listOf(
+        "100m", "200m", "400m",
+        "800m", "1500m", "3000m", "5000m", "10000m",
+        "Half Marathon", "Marathon"
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +49,9 @@ class AthleteActivity : AppCompatActivity() {
         binding.countryDropdown.setAdapter(
             ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, countryDisplayNames)
         )
+        binding.eventDropdown.setAdapter(
+            ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, events)
+        )
 
         binding.roleDropdown.setOnItemClickListener { _, _, pos, _ ->
             athlete.role = roles[pos]
@@ -53,6 +63,12 @@ class AthleteActivity : AppCompatActivity() {
             athlete.country = countryList[pos]
         }
 
+        binding.eventDropdown.setOnItemClickListener { _, _, pos, _ ->
+            val ev = events[pos]
+            athlete.event = ev
+            updatePbHint(ev)
+        }
+
         if (intent.hasExtra("athlete_edit")) {
             isEdit = true
             athlete = intent.extras?.getParcelable("athlete_edit")!!
@@ -61,95 +77,134 @@ class AthleteActivity : AppCompatActivity() {
             binding.athleteNotes.setText(athlete.description)
             binding.roleDropdown.setText(athlete.role, false)
             binding.groupDropdown.setText(athlete.group, false)
-
-            binding.athletePB.setText(formatSecondsToTime(athlete.personalBestSeconds))
-
             binding.countryDropdown.setText(athlete.country.displayName, false)
 
+            if (athlete.event.isNotEmpty()) {
+                binding.eventDropdown.setText(athlete.event, false)
+                updatePbHint(athlete.event)
+            }
+
+            binding.athletePB.setText(formatSecondsToTimeForEdit(athlete))
             binding.switchActive.isChecked = athlete.isActive
             binding.btnAdd.text = getString(R.string.button_saveAthlete)
         } else {
             binding.btnAdd.text = getString(R.string.button_addAthlete)
         }
 
-        binding.btnAdd.setOnClickListener {
+        binding.btnAdd.setOnClickListener { view ->
             val name = binding.athleteName.text?.toString()?.trim().orEmpty()
             if (name.isEmpty()) {
-                Snackbar.make(it, getString(R.string.err_enter_name), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(view, getString(R.string.err_enter_name), Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-            var ok = true
-
-            val pb = binding.athletePB.text?.toString()?.trim().orEmpty()
-            val pbOk = pb.isEmpty() || Regex(
-                """^(?:\d{1,2}:[0-5]\d:[0-5]\d|[0-5]?\d:[0-5]\d)(?:\s+\d{3,4}m)?$""").matches(pb)
-            if (!pbOk) {
-                binding.athletePBLayout.error = "Use hh:mm:ss or mm:ss (optional distance)"
-                ok = false
-            } else binding.athletePBLayout.error = null
-
-            if (!ok) return@setOnClickListener
 
             athlete.name = name
             athlete.description = binding.athleteNotes.text?.toString()?.trim().orEmpty()
 
-            // Parse PB input to seconds
+            val eventText = binding.eventDropdown.text?.toString()?.trim().orEmpty()
+            athlete.event = eventText
+
             val pbInput = binding.athletePB.text?.toString()?.trim().orEmpty()
-            athlete.personalBestSeconds = parsePersonalBestToSeconds(pbInput)
-
-            val pickedRole = binding.roleDropdown.text?.toString()?.trim().orEmpty()
-            val pickedGroup = binding.groupDropdown.text?.toString()?.trim().orEmpty()
-            val pickedCountryName = binding.countryDropdown.text?.toString()?.trim().orEmpty()
-
-            if (pickedRole.isNotEmpty()) athlete.role = pickedRole
-            if (pickedGroup.isNotEmpty()) athlete.group = pickedGroup
-
-            if (pickedCountryName.isNotEmpty()) {
-                val selectedCountry = countryList.firstOrNull {
-                    it.displayName == pickedCountryName
+            if (pbInput.isNotEmpty()) {
+                val parsed = parsePB(pbInput, eventText)
+                if (parsed == null) {
+                    binding.athletePBLayout.error =
+                        "Invalid PB format for $eventText. Try 10.45 or 3:45 or 2:10:30."
+                    return@setOnClickListener
+                } else {
+                    binding.athletePBLayout.error = null
+                    athlete.personalBestSeconds = parsed
                 }
-                if (selectedCountry != null) {
-                    athlete.country = selectedCountry
+            } else {
+                athlete.personalBestSeconds = null
+                binding.athletePBLayout.error = null
+            }
+
+            val pickedCountryName = binding.countryDropdown.text?.toString()?.trim().orEmpty()
+            if (pickedCountryName.isNotEmpty()) {
+                countryList.firstOrNull { it.displayName == pickedCountryName }?.let {
+                    athlete.country = it
                 }
             }
 
             athlete.isActive = binding.switchActive.isChecked
 
-            if (isEdit) {
-                app.athletes.update(athlete)
-            } else {
-                app.athletes.create(athlete)
+            if (!isEdit) {
+                athlete.ownerUsername = AuthManager.getUsername(this) ?: ""
             }
+
+            if (isEdit) app.athletes.update(athlete)
+            else app.athletes.create(athlete)
 
             setResult(RESULT_OK)
             finish()
         }
     }
-    private fun parsePersonalBestToSeconds(input: String): Int? {
-        if (input.isBlank()) return null
 
-        // Support "mm:ss" (e.g., "3:45")
-        val parts = input.split(":")
-        return if (parts.size == 2) {
-            val minutes = parts[0].toIntOrNull()
-            val seconds = parts[1].toIntOrNull()
-            if (minutes != null && seconds != null) {
-                minutes * 60 + seconds
-            } else {
-                null
-            }
-        } else {
-            // plain seconds (e.g., "225")
-            input.toIntOrNull()
+
+    private fun updatePbHint(event: String) {
+        binding.athletePBLayout.hint = when (event) {
+            "100m", "200m", "400m" -> "Personal Best (ss.ms)"
+            "800m", "1500m", "3000m", "5000m", "10000m" -> "Personal Best (mm:ss)"
+            "Half Marathon", "Marathon" -> "Personal Best (hh:mm:ss)"
+            else -> "Personal Best"
         }
     }
 
-    private fun formatSecondsToTime(totalSeconds: Int?): String {
-        if (totalSeconds == null) return ""
-        val minutes = totalSeconds / 60
-        val seconds = totalSeconds % 60
-        return String.format("%d:%02d", minutes, seconds)
+
+    private fun parsePB(input: String, event: String): Int? {
+        if (input.isBlank()) return null
+        val trimmed = input.trim()
+
+        if (event in listOf("100m", "200m", "400m")) {
+            val seconds = trimmed.toFloatOrNull() ?: return null
+            return (seconds * 100).toInt()
+        }
+
+        val parts = trimmed.split(":")
+
+        return when (parts.size) {
+
+            2 -> {
+                val minutes = parts[0].toIntOrNull() ?: return null
+                val secs = parts[1].toFloatOrNull() ?: return null
+                (minutes * 60 + secs).toInt()
+            }
+
+            3 -> {
+                val h = parts[0].toIntOrNull() ?: return null
+                val m = parts[1].toIntOrNull() ?: return null
+                val s = parts[2].toIntOrNull() ?: return null
+                h * 3600 + m * 60 + s
+            }
+
+            else -> trimmed.toIntOrNull()
+        }
     }
+
+    private fun formatSecondsToTimeForEdit(athlete: AthleteModel): String {
+        val pb = athlete.personalBestSeconds ?: return ""
+        val event = athlete.event
+
+        return when (event) {
+            "100m", "200m", "400m" -> {
+                val seconds = pb / 100f
+                "%.2f".format(seconds)
+            }
+            "Half Marathon", "Marathon" -> {
+                val h = pb / 3600
+                val m = (pb % 3600) / 60
+                val s = pb % 60
+                "%02d:%02d:%02d".format(h, m, s)
+            }
+            else -> {
+                val minutes = pb / 60
+                val seconds = pb % 60
+                "%d:%02d".format(minutes, seconds)
+            }
+        }
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
