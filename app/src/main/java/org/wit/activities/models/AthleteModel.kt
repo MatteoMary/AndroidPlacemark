@@ -21,8 +21,8 @@ data class AthleteModel(
     var description: String = "",
     var role: String = "All-rounder",
     var group: String = "",
-    var personalBest: String = "",
-    var country: String = "",
+    var personalBestSeconds: Int? = null,
+    var country: Country = Country.IRELAND,
     var isActive: Boolean = true
 ) : Parcelable
 

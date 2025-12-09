@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar
 import org.wit.activities.R
 import org.wit.activities.adapters.AthleteAdapter
 import org.wit.activities.adapters.AthleteListener
+import org.wit.activities.auth.AuthManager
 import org.wit.activities.databinding.ActivityAthleteListBinding
 import org.wit.activities.databinding.CardAthleteBinding
 import org.wit.activities.main.MainApp
@@ -89,9 +90,17 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
                 true
             }
             R.id.item_cancel -> true
+            R.id.item_logout -> {
+                AuthManager.logout(this)
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+                true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
+
 
     private val getResult =
         registerForActivityResult(

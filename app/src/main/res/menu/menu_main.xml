@@ -14,4 +14,10 @@
         android:icon="@android:drawable/ic_menu_close_clear_cancel"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/item_logout"
+        android:title="Logout"
+        android:orderInCategory="100"
+        app:showAsAction="never" />
+
 </menu>
