@@ -37,8 +37,9 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
         app = application as MainApp
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        binding.recyclerView.adapter = AthleteAdapter(app.athletes.findAll(), this)
+        binding.recyclerView.adapter = AthleteAdapter(currentUserAthletes(), this)
         toggleEmptyState()
+
 
         binding.fabAddAthlete.setOnClickListener {
             val intent = Intent(this, AthleteActivity::class.java)
@@ -61,17 +62,18 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
 
                 app.athletes.delete(athlete)
 
-                binding.recyclerView.adapter = AthleteAdapter(app.athletes.findAll(), this@AthleteListActivity)
+                binding.recyclerView.adapter = AthleteAdapter(currentUserAthletes(), this@AthleteListActivity)
                 toggleEmptyState()
 
                 Snackbar.make(binding.root, "Deleted ${athlete.name}", Snackbar.LENGTH_LONG)
                     .setAction("UNDO") {
                         app.athletes.create(athlete.copy(id = 0))
-                        binding.recyclerView.adapter = AthleteAdapter(app.athletes.findAll(), this@AthleteListActivity)
+                        binding.recyclerView.adapter = AthleteAdapter(currentUserAthletes(), this@AthleteListActivity)
                         toggleEmptyState()
                     }
                     .show()
             }
+
         })
         itemTouchHelper.attachToRecyclerView(binding.recyclerView)
 
@@ -107,7 +109,7 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
             ActivityResultContracts.StartActivityForResult()
         ) {
             if (it.resultCode == RESULT_OK) {
-                binding.recyclerView.adapter = AthleteAdapter(app.athletes.findAll(), this)
+                binding.recyclerView.adapter = AthleteAdapter(currentUserAthletes(), this)
                 toggleEmptyState()
             }
         }
@@ -119,8 +121,15 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
     }
 
     private fun toggleEmptyState() {
-        val empty = app.athletes.findAll().isEmpty()
+        val empty = currentUserAthletes().isEmpty()
         binding.emptyState.visibility = if (empty) View.VISIBLE else View.GONE
         binding.recyclerView.visibility = if (empty) View.GONE else View.VISIBLE
     }
+
+
+    private fun currentUserAthletes(): List<AthleteModel> {
+        val username = AuthManager.getUsername(this) ?: return emptyList()
+        return app.athletes.findAll().filter { it.ownerUsername == username }
+    }
+
 }

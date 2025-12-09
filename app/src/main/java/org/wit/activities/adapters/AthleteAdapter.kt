@@ -38,22 +38,46 @@ class AthleteAdapter(
             binding.athleteRole.text = athlete.role
             binding.athleteGroup.text = athlete.group
             binding.athleteCountry.text = athlete.country.displayName
+
             binding.athletePB.text = formatPb(athlete)
+
             binding.athleteActive.text = if (athlete.isActive) "Active" else "Inactive"
+
             binding.root.setOnClickListener {
                 listener.onAthleteClick(athlete)
             }
         }
 
         private fun formatPb(athlete: AthleteModel): String {
-            val totalSeconds = athlete.personalBestSeconds
-            if (totalSeconds == null) return "PB: N/A"
+            val pb = athlete.personalBestSeconds ?: return "PB: N/A"
+            val event = athlete.event
 
-            val minutes = totalSeconds / 60
-            val seconds = totalSeconds % 60
-            val time = String.format("%d:%02d", minutes, seconds)
+            val sprintEvents = listOf("100m", "200m", "400m")
+            val longEvents = listOf("Half Marathon", "Marathon")
 
-            return "PB: $time"
+            val timeString = when {
+                event in sprintEvents -> {
+                    val seconds = pb / 100f
+                    "%.2f".format(seconds)
+                }
+                event in longEvents -> {
+                    val h = pb / 3600
+                    val m = (pb % 3600) / 60
+                    val s = pb % 60
+                    "%02d:%02d:%02d".format(h, m, s)
+                }
+                else -> {
+                    val minutes = pb / 60
+                    val seconds = pb % 60
+                    "%d:%02d".format(minutes, seconds)
+                }
+            }
+
+            return if (event.isNotBlank()) {
+                "PB: $timeString ($event)"
+            } else {
+                "PB: $timeString"
+            }
         }
     }
 }
