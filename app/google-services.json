@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "913773689720",
+    "project_id": "mobileapp-f4b99",
+    "storage_bucket": "mobileapp-f4b99.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:913773689720:android:8e51572a515e28af06268d",
+        "android_client_info": {
+          "package_name": "org.wit.activities"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSjL-zXXSJ6O6gGAiK0irVvFPIq5o_r2I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
