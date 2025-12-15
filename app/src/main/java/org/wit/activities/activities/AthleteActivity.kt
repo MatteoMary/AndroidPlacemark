@@ -53,16 +53,11 @@ class AthleteActivity : AppCompatActivity() {
             ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, events)
         )
 
-        binding.roleDropdown.setOnItemClickListener { _, _, pos, _ ->
-            athlete.role = roles[pos]
-        }
-        binding.groupDropdown.setOnItemClickListener { _, _, pos, _ ->
-            athlete.group = groups[pos]
-        }
+        binding.roleDropdown.setOnItemClickListener { _, _, pos, _ -> athlete.role = roles[pos] }
+        binding.groupDropdown.setOnItemClickListener { _, _, pos, _ -> athlete.group = groups[pos] }
         binding.countryDropdown.setOnItemClickListener { _, _, pos, _ ->
             athlete.country = countryList[pos]
         }
-
         binding.eventDropdown.setOnItemClickListener { _, _, pos, _ ->
             val ev = events[pos]
             athlete.event = ev
@@ -133,16 +128,46 @@ class AthleteActivity : AppCompatActivity() {
                 athlete.ownerUsername = AuthManager.getUsername(this) ?: ""
             }
 
-            if (isEdit) app.athletes.update(athlete)
-            else app.athletes.create(athlete)
+            if (isEdit) {
+                app.athletes.update(athlete) {
 
-            setResult(RESULT_OK)
-            finish()
+                }
+            } else {
+                app.athletes.create(athlete) {
+                }
+                setResult(RESULT_OK)
+                finish()
+            }
+
+                binding.btnAdd.isEnabled = false
+
+            val doneOk: (Boolean) -> Unit = { success ->
+                runOnUiThread {
+                    binding.btnAdd.isEnabled = true
+
+                    if (success) {
+                        setResult(RESULT_OK)
+                        finish()
+                    } else {
+                        Snackbar.make(
+                            binding.root,
+                            "Save failed (check Firestore rules/internet)",
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
+
+            if (isEdit) {
+                app.athletes.update(athlete, doneOk)
+            } else {
+                app.athletes.create(athlete, doneOk)
+            }
         }
     }
 
 
-    private fun updatePbHint(event: String) {
+        private fun updatePbHint(event: String) {
         binding.athletePBLayout.hint = when (event) {
             "100m", "200m", "400m" -> "Personal Best (ss.ms)"
             "800m", "1500m", "3000m", "5000m", "10000m" -> "Personal Best (mm:ss)"
@@ -150,7 +175,6 @@ class AthleteActivity : AppCompatActivity() {
             else -> "Personal Best"
         }
     }
-
 
     private fun parsePB(input: String, event: String): Int? {
         if (input.isBlank()) return null
@@ -162,22 +186,18 @@ class AthleteActivity : AppCompatActivity() {
         }
 
         val parts = trimmed.split(":")
-
         return when (parts.size) {
-
             2 -> {
                 val minutes = parts[0].toIntOrNull() ?: return null
                 val secs = parts[1].toFloatOrNull() ?: return null
                 (minutes * 60 + secs).toInt()
             }
-
             3 -> {
                 val h = parts[0].toIntOrNull() ?: return null
                 val m = parts[1].toIntOrNull() ?: return null
                 val s = parts[2].toIntOrNull() ?: return null
                 h * 3600 + m * 60 + s
             }
-
             else -> trimmed.toIntOrNull()
         }
     }
@@ -204,7 +224,6 @@ class AthleteActivity : AppCompatActivity() {
             }
         }
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)

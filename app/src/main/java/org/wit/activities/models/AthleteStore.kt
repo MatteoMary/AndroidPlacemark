@@ -1,8 +1,8 @@
 package org.wit.activities.models
 
 interface AthleteStore {
-    fun findAll(): List<AthleteModel>
-    fun create(athlete: AthleteModel)
-    fun update(athlete: AthleteModel)
-    fun delete(athlete: AthleteModel)
+    fun findAll(callback: (List<AthleteModel>) -> Unit)
+    fun create(athlete: AthleteModel, callback: (Boolean) -> Unit)
+    fun update(athlete: AthleteModel, callback: (Boolean) -> Unit)
+    fun delete(athlete: AthleteModel, callback: (Boolean) -> Unit)
 }

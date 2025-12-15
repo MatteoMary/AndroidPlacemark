@@ -1,7 +1,10 @@
 package org.wit.activities.main
 
 import android.app.Application
+import android.util.Log
 import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.FirebaseFirestore
+import org.wit.activities.models.AthleteFirestoreStore
 import org.wit.activities.models.AthleteJSONStore
 import org.wit.activities.models.AthleteStore
 import timber.log.Timber
@@ -17,6 +20,22 @@ class MainApp : Application() {
 
         FirebaseApp.initializeApp(this)
 
-        athletes = AthleteJSONStore(applicationContext)
+        athletes = AthleteFirestoreStore()
+
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("athletes")
+            .add(mapOf(
+                "name" to "TEST ATHLETE",
+                "ownerUsername" to "debug",
+                "createdAt" to System.currentTimeMillis()
+            ))
+            .addOnSuccessListener {
+                Log.i("FIRESTORE_TEST", "Write SUCCESS")
+            }
+            .addOnFailureListener { e ->
+                Log.e("FIRESTORE_TEST", "Write FAILED", e)
+            }
+
     }
 }
