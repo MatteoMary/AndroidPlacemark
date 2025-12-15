@@ -16,7 +16,7 @@ enum class Country(val code: String, val displayName: String) {
 
 @Parcelize
 data class AthleteModel(
-    var id: Long = 0,
+    var id: String = "",
     var name: String = "",
     var description: String = "",
     var role: String = "All-rounder",

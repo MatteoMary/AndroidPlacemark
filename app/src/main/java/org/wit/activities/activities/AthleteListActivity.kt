@@ -2,11 +2,9 @@ package org.wit.activities.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -18,7 +16,6 @@ import org.wit.activities.adapters.AthleteAdapter
 import org.wit.activities.adapters.AthleteListener
 import org.wit.activities.auth.AuthManager
 import org.wit.activities.databinding.ActivityAthleteListBinding
-import org.wit.activities.databinding.CardAthleteBinding
 import org.wit.activities.main.MainApp
 import org.wit.activities.models.AthleteModel
 
@@ -26,6 +23,7 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
 
     lateinit var app: MainApp
     private lateinit var binding: ActivityAthleteListBinding
+    private lateinit var adapter: AthleteAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,17 +31,16 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
-
         app = application as MainApp
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        binding.recyclerView.adapter = AthleteAdapter(currentUserAthletes(), this)
-        toggleEmptyState()
+        adapter = AthleteAdapter(emptyList(), this)
+        binding.recyclerView.adapter = adapter
+        refreshList()
 
 
         binding.fabAddAthlete.setOnClickListener {
-            val intent = Intent(this, AthleteActivity::class.java)
-            getResult.launch(intent)
+            getResult.launch(Intent(this, AthleteActivity::class.java))
         }
 
         val itemTouchHelper = ItemTouchHelper(object :
@@ -56,28 +53,73 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
             ) = false
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val adapter = binding.recyclerView.adapter as AthleteAdapter
                 val pos = viewHolder.bindingAdapterPosition
                 val athlete = adapter.getItem(pos)
 
-                app.athletes.delete(athlete)
+                app.athletes.delete(athlete) { success ->
+                    runOnUiThread {
+                        if (success) {
+                            Snackbar.make(binding.root, "Deleted ${athlete.name}", Snackbar.LENGTH_LONG)
+                                .setAction("UNDO") {
+                                    val username = AuthManager.getUsername(this@AthleteListActivity) ?: ""
+                                    val undoAthlete = athlete.copy(
+                                        id = "",
+                                        ownerUsername = username
+                                    )
+                                    app.athletes.create(undoAthlete) { _ ->
+                                        refreshList()
+                                    }
+                                }
+                                .show()
+                        } else {
+                            Snackbar.make(binding.root, "Delete failed", Snackbar.LENGTH_LONG).show()
+                        }
 
-                binding.recyclerView.adapter = AthleteAdapter(currentUserAthletes(), this@AthleteListActivity)
-                toggleEmptyState()
-
-                Snackbar.make(binding.root, "Deleted ${athlete.name}", Snackbar.LENGTH_LONG)
-                    .setAction("UNDO") {
-                        app.athletes.create(athlete.copy(id = 0))
-                        binding.recyclerView.adapter = AthleteAdapter(currentUserAthletes(), this@AthleteListActivity)
-                        toggleEmptyState()
+                        refreshList()
                     }
-                    .show()
+                }
             }
-
         })
+
         itemTouchHelper.attachToRecyclerView(binding.recyclerView)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshList()
+    }
+
+    private fun refreshList() {
+        val username = AuthManager.getUsername(this) ?: ""
+
+        app.athletes.findAll { allAthletes ->
+            val mine = allAthletes.filter { it.ownerUsername == username }
+
+            runOnUiThread {
+                adapter.setData(mine)
+                toggleEmptyState(mine)
+            }
+        }
+    }
+
+    private fun toggleEmptyState(list: List<AthleteModel>) {
+        val empty = list.isEmpty()
+        binding.emptyState.visibility = if (empty) View.VISIBLE else View.GONE
+        binding.recyclerView.visibility = if (empty) View.GONE else View.VISIBLE
+    }
+
+
+    override fun onAthleteClick(athlete: AthleteModel) {
+        val intent = Intent(this, AthleteActivity::class.java)
+        intent.putExtra("athlete_edit", athlete)
+        getResult.launch(intent)
 
     }
+
+    private val getResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) refreshList()
+        }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -87,8 +129,7 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.item_add -> {
-                val intent = Intent(this, AthleteActivity::class.java)
-                getResult.launch(intent)
+                getResult.launch(Intent(this, AthleteActivity::class.java))
                 true
             }
             R.id.item_cancel -> true
@@ -98,38 +139,7 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
                 finish()
                 true
             }
-
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-
-    private val getResult =
-        registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) {
-            if (it.resultCode == RESULT_OK) {
-                binding.recyclerView.adapter = AthleteAdapter(currentUserAthletes(), this)
-                toggleEmptyState()
-            }
-        }
-
-    override fun onAthleteClick(athlete: AthleteModel) {
-        val intent = Intent(this, AthleteActivity::class.java)
-        intent.putExtra("athlete_edit", athlete)
-        getResult.launch(intent)
-    }
-
-    private fun toggleEmptyState() {
-        val empty = currentUserAthletes().isEmpty()
-        binding.emptyState.visibility = if (empty) View.VISIBLE else View.GONE
-        binding.recyclerView.visibility = if (empty) View.GONE else View.VISIBLE
-    }
-
-
-    private fun currentUserAthletes(): List<AthleteModel> {
-        val username = AuthManager.getUsername(this) ?: return emptyList()
-        return app.athletes.findAll().filter { it.ownerUsername == username }
-    }
-
 }

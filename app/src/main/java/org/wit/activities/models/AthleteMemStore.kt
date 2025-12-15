@@ -1,42 +1,27 @@
 package org.wit.activities.models
 
-import timber.log.Timber.i
-
-var lastId = 0L
-
-internal fun getId(): Long {
-    return lastId++
-}
-
 class AthleteMemStore : AthleteStore {
 
-    val athletes = ArrayList<AthleteModel>()
+    private val athletes = mutableListOf<AthleteModel>()
 
-    override fun findAll(): List<AthleteModel> {
-        return athletes
+    override fun findAll(callback: (List<AthleteModel>) -> Unit) {
+        callback(athletes)
     }
 
-    override fun create(athlete: AthleteModel) {
-        athlete.id = getId()
+    override fun create(athlete: AthleteModel, callback: (Boolean) -> Unit) {
         athletes.add(athlete)
-        logAll()
+        callback(true)
     }
 
-    override fun update(athlete: AthleteModel) {
-        var foundAthlete: AthleteModel? = athletes.find { p -> p.id == athlete.id }
-        if (foundAthlete != null) {
-            foundAthlete.name = athlete.name
-            foundAthlete.description = athlete.description
-            foundAthlete.role = athlete.role
-            logAll()
-        }
+    override fun update(athlete: AthleteModel, callback: (Boolean) -> Unit) {
+        val index = athletes.indexOfFirst { it.id == athlete.id }
+        if (index >= 0) {
+            athletes[index] = athlete
+            callback(true)
+        } else callback(false)
     }
 
-    override fun delete(athlete: AthleteModel) {
-        athletes.removeIf { it.id == athlete.id }
-        logAll()
-    }
-    private fun logAll() {
-        athletes.forEach { i("$it") }
+    override fun delete(athlete: AthleteModel, callback: (Boolean) -> Unit) {
+        callback(athletes.removeIf { it.id == athlete.id })
     }
 }

@@ -7,7 +7,7 @@ import org.wit.activities.databinding.CardAthleteBinding
 import org.wit.activities.models.AthleteModel
 
 class AthleteAdapter(
-    private val athletes: List<AthleteModel>,
+    private var athletes: List<AthleteModel>,
     private val listener: AthleteListener
 ) : RecyclerView.Adapter<AthleteAdapter.MainHolder>() {
 
@@ -28,6 +28,11 @@ class AthleteAdapter(
     override fun getItemCount(): Int = athletes.size
 
     fun getItem(position: Int): AthleteModel = athletes[position]
+
+    fun setData(newAthletes: List<AthleteModel>) {
+        athletes = newAthletes
+        notifyDataSetChanged()
+    }
 
     class MainHolder(private val binding: CardAthleteBinding) :
         RecyclerView.ViewHolder(binding.root) {
