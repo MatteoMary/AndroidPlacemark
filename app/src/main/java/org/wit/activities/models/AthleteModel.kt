@@ -26,7 +26,7 @@ data class AthleteModel(
     var isActive: Boolean = true,
     var ownerUsername: String = "",
     var event: String = "",
-    var dateOfBirth: Long? = null
+    var dateOfBirth: Long? = null,
 
 ) : Parcelable
 

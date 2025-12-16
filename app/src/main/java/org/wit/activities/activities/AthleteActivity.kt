@@ -164,7 +164,7 @@ class AthleteActivity : AppCompatActivity() {
 
             val doneOk: (Boolean) -> Unit = { success ->
                 runOnUiThread {
-                    binding.btnAdd.isEnabled = true
+                    binding.btnAdd.isEnabled = false
 
                     if (success) {
                         setResult(RESULT_OK)
@@ -177,12 +177,6 @@ class AthleteActivity : AppCompatActivity() {
                         ).show()
                     }
                 }
-            }
-
-            if (isEdit) {
-                app.athletes.update(athlete, doneOk)
-            } else {
-                app.athletes.create(athlete, doneOk)
             }
         }
     }
