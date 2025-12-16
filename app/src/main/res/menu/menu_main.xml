@@ -19,5 +19,21 @@
         android:title="Logout"
         android:orderInCategory="100"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/item_theme"
+        android:title="Theme">
+        <menu>
+            <item
+                android:id="@+id/theme_system"
+                android:title="System" />
+            <item
+                android:id="@+id/theme_light"
+                android:title="Light" />
+            <item
+                android:id="@+id/theme_dark"
+                android:title="Dark" />
+        </menu>
+    </item>
+
 
 </menu>

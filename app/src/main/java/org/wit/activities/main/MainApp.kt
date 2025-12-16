@@ -15,6 +15,7 @@ class MainApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        ThemeManager.applySavedTheme(this)
         Timber.plant(Timber.DebugTree())
         Timber.i("Athlete Tracker started")
 

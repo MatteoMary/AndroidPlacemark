@@ -6,12 +6,15 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import org.wit.activities.databinding.ActivitySignupBinding
 import org.wit.activities.auth.AuthManager
+import org.wit.activities.helpers.ThemeHelper
 
 class SignupActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignupBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeHelper.applySavedTheme(this)
+
         super.onCreate(savedInstanceState)
         binding = ActivitySignupBinding.inflate(layoutInflater)
         setContentView(binding.root)

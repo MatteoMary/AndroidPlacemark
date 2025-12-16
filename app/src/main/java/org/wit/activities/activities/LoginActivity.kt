@@ -7,6 +7,7 @@ import com.google.android.material.snackbar.Snackbar
 import org.wit.activities.databinding.ActivityLoginBinding
 import org.wit.activities.auth.AuthManager
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import org.wit.activities.helpers.ThemeHelper
 
 
 class LoginActivity : AppCompatActivity() {
@@ -15,6 +16,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
+        ThemeHelper.applySavedTheme(this)
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)

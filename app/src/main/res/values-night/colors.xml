@@ -1,0 +1,9 @@
+<resources>
+    <color name="splash_background">#121212</color>
+    <color name="splash_icon_bg">#1E88E5</color>
+
+    <color name="brandPrimary">#BB86FC</color>
+    <color name="brandSecondary">#03DAC6</color>
+
+    <color name="surface">#121212</color>
+</resources>
