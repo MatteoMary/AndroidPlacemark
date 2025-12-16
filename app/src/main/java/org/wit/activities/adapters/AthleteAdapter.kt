@@ -7,9 +7,12 @@ import org.wit.activities.databinding.CardAthleteBinding
 import org.wit.activities.models.AthleteModel
 
 class AthleteAdapter(
-    private var athletes: List<AthleteModel>,
+    athletes: List<AthleteModel>,
     private val listener: AthleteListener
 ) : RecyclerView.Adapter<AthleteAdapter.MainHolder>() {
+
+    private val athletes = athletes.toMutableList()
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainHolder {
         val binding = CardAthleteBinding.inflate(
@@ -30,7 +33,8 @@ class AthleteAdapter(
     fun getItem(position: Int): AthleteModel = athletes[position]
 
     fun setData(newAthletes: List<AthleteModel>) {
-        athletes = newAthletes
+        athletes.clear()
+        athletes.addAll(newAthletes)
         notifyDataSetChanged()
     }
 
