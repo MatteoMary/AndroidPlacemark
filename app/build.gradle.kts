@@ -46,6 +46,7 @@ android {
 dependencies {
     implementation("com.google.code.gson:gson:2.13.2")
     implementation("com.google.android.material:material:1.13.0")
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

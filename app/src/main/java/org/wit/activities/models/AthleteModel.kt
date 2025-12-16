@@ -25,7 +25,8 @@ data class AthleteModel(
     var country: Country = Country.IRELAND,
     var isActive: Boolean = true,
     var ownerUsername: String = "",
-    var event: String = ""
+    var event: String = "",
+    var dateOfBirth: Long? = null
 
 ) : Parcelable
 
