@@ -7,18 +7,16 @@
         <item name="postSplashScreenTheme">@style/Theme.Athlete</item>
     </style>
 
-    <style name="Theme.Athlete" parent="Theme.Material3.Light.NoActionBar">
+    <style name="Theme.Athlete" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/brandPrimary</item>
         <item name="colorSecondary">@color/brandSecondary</item>
         <item name="colorSurface">@color/surface</item>
         <item name="android:statusBarColor">@color/brandPrimary</item>
 
-        <!-- global rounded corners -->
         <item name="shapeAppearanceSmallComponent">@style/Shape.Rounded</item>
         <item name="shapeAppearanceMediumComponent">@style/Shape.Rounded</item>
         <item name="shapeAppearanceLargeComponent">@style/Shape.Rounded</item>
 
-        <!-- default widgets -->
         <item name="materialCardViewStyle">@style/Widget.Card</item>
         <item name="materialButtonStyle">@style/Widget.Button</item>
         <item name="textInputStyle">@style/Widget.TextInput</item>
@@ -52,4 +50,5 @@
     <style name="Widget.Toolbar" parent="Widget.Material3.Toolbar">
         <item name="titleCentered">true</item>
     </style>
+
 </resources>

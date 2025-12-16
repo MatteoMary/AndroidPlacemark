@@ -13,6 +13,7 @@ import org.wit.activities.main.MainApp
 import org.wit.activities.models.AthleteModel
 import org.wit.activities.models.Country
 import com.google.android.material.datepicker.MaterialDatePicker
+import org.wit.activities.helpers.ThemeHelper
 
 
 class AthleteActivity : AppCompatActivity() {
@@ -32,6 +33,7 @@ class AthleteActivity : AppCompatActivity() {
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeHelper.applySavedTheme(this)
         super.onCreate(savedInstanceState)
         binding = ActivityAthleteBinding.inflate(layoutInflater)
         setContentView(binding.root)

@@ -16,6 +16,7 @@ import org.wit.activities.adapters.AthleteAdapter
 import org.wit.activities.adapters.AthleteListener
 import org.wit.activities.auth.AuthManager
 import org.wit.activities.databinding.ActivityAthleteListBinding
+import org.wit.activities.helpers.ThemeHelper
 import org.wit.activities.main.MainApp
 import org.wit.activities.models.AthleteModel
 
@@ -26,6 +27,7 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
     private lateinit var adapter: AthleteAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeHelper.applySavedTheme(this)
         super.onCreate(savedInstanceState)
         binding = ActivityAthleteListBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -128,6 +130,10 @@ class AthleteListActivity : AppCompatActivity(), AthleteListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.theme_system -> { ThemeHelper.setThemeMode(this, 0); recreate(); true }
+            R.id.theme_light  -> { ThemeHelper.setThemeMode(this, 1); recreate(); true }
+            R.id.theme_dark   -> { ThemeHelper.setThemeMode(this, 2); recreate(); true }
+
             R.id.item_add -> {
                 getResult.launch(Intent(this, AthleteActivity::class.java))
                 true
