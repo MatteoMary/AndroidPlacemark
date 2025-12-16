@@ -12,6 +12,8 @@ import org.wit.activities.databinding.ActivityAthleteBinding
 import org.wit.activities.main.MainApp
 import org.wit.activities.models.AthleteModel
 import org.wit.activities.models.Country
+import com.google.android.material.datepicker.MaterialDatePicker
+
 
 class AthleteActivity : AppCompatActivity() {
 
@@ -53,6 +55,19 @@ class AthleteActivity : AppCompatActivity() {
             ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, events)
         )
 
+        binding.dobText.setOnClickListener {
+            val picker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText("Select Date of Next Race")
+                .build()
+
+            picker.addOnPositiveButtonClickListener { millis ->
+                athlete.dateOfBirth = millis
+                binding.dobText.setText(android.text.format.DateFormat.format("dd/MM/yyyy", millis))
+            }
+
+            picker.show(supportFragmentManager, "DOB_PICKER")
+        }
+
         binding.roleDropdown.setOnItemClickListener { _, _, pos, _ -> athlete.role = roles[pos] }
         binding.groupDropdown.setOnItemClickListener { _, _, pos, _ -> athlete.group = groups[pos] }
         binding.countryDropdown.setOnItemClickListener { _, _, pos, _ ->
@@ -73,6 +88,10 @@ class AthleteActivity : AppCompatActivity() {
             binding.roleDropdown.setText(athlete.role, false)
             binding.groupDropdown.setText(athlete.group, false)
             binding.countryDropdown.setText(athlete.country.displayName, false)
+
+            athlete.dateOfBirth?.let { dob ->
+                binding.dobText.setText(formatDob(dob))
+            }
 
             if (athlete.event.isNotEmpty()) {
                 binding.eventDropdown.setText(athlete.event, false)
@@ -201,6 +220,10 @@ class AthleteActivity : AppCompatActivity() {
             else -> trimmed.toIntOrNull()
         }
     }
+
+    private fun formatDob(millis: Long): String =
+        android.text.format.DateFormat.format("dd/MM/yyyy", millis).toString()
+
 
     private fun formatSecondsToTimeForEdit(athlete: AthleteModel): String {
         val pb = athlete.personalBestSeconds ?: return ""
