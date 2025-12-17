@@ -27,6 +27,14 @@ data class AthleteModel(
     var ownerUsername: String = "",
     var event: String = "",
     var dateOfBirth: Long? = null,
+    var location: Location = Location()
+
 
 ) : Parcelable
+
+@Parcelize
+data class Location(var lat: Double = 52.2464568,
+                    var lng: Double = -7.1263403,
+                    var zoom: Float = 15f) : Parcelable
+
 

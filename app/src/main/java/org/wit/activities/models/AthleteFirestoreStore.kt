@@ -36,7 +36,6 @@ class AthleteFirestoreStore : AthleteStore {
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
 
-        callback(true)
     }
 
 
@@ -52,7 +51,6 @@ class AthleteFirestoreStore : AthleteStore {
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
 
-        callback(true)
     }
 
 
@@ -68,7 +66,6 @@ class AthleteFirestoreStore : AthleteStore {
             .addOnSuccessListener { callback(true) }
             .addOnFailureListener { callback(false) }
 
-        callback(true)
     }
 
 }

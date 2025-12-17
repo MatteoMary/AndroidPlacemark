@@ -1,9 +1,13 @@
 package org.wit.activities.activities
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log.i
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import org.wit.activities.R
@@ -14,6 +18,9 @@ import org.wit.activities.models.AthleteModel
 import org.wit.activities.models.Country
 import com.google.android.material.datepicker.MaterialDatePicker
 import org.wit.activities.helpers.ThemeHelper
+import org.wit.activities.models.Location
+import timber.log.Timber
+import timber.log.Timber.i
 
 
 class AthleteActivity : AppCompatActivity() {
@@ -22,6 +29,10 @@ class AthleteActivity : AppCompatActivity() {
     private var athlete = AthleteModel()
     private lateinit var app: MainApp
     private var isEdit = false
+    var location = Location(52.245696, -7.139102, 15f)
+
+    private lateinit var mapIntentLauncher : ActivityResultLauncher<Intent>
+
 
     private val countryList = Country.values().toList()
     private val countryDisplayNames = countryList.map { it.displayName }
@@ -38,6 +49,8 @@ class AthleteActivity : AppCompatActivity() {
         binding = ActivityAthleteBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbarAdd)
+
+        registerMapCallback()
 
         app = application as MainApp
 
@@ -70,6 +83,15 @@ class AthleteActivity : AppCompatActivity() {
             picker.show(supportFragmentManager, "DOB_PICKER")
         }
 
+        binding.athleteLocation.setOnClickListener {
+            val launcherIntent = Intent(this, MapActivity::class.java)
+                .putExtra("location", location)
+            mapIntentLauncher.launch(launcherIntent)
+        }
+
+
+
+
         binding.roleDropdown.setOnItemClickListener { _, _, pos, _ -> athlete.role = roles[pos] }
         binding.groupDropdown.setOnItemClickListener { _, _, pos, _ -> athlete.group = groups[pos] }
         binding.countryDropdown.setOnItemClickListener { _, _, pos, _ ->
@@ -90,6 +112,9 @@ class AthleteActivity : AppCompatActivity() {
             binding.roleDropdown.setText(athlete.role, false)
             binding.groupDropdown.setText(athlete.group, false)
             binding.countryDropdown.setText(athlete.country.displayName, false)
+
+            location = athlete.location
+
 
             athlete.dateOfBirth?.let { dob ->
                 binding.dobText.setText(formatDob(dob))
@@ -149,6 +174,8 @@ class AthleteActivity : AppCompatActivity() {
                 athlete.ownerUsername = AuthManager.getUsername(this) ?: ""
             }
 
+            athlete.location = location
+
             if (isEdit) {
                 app.athletes.update(athlete) {
 
@@ -162,22 +189,32 @@ class AthleteActivity : AppCompatActivity() {
 
                 binding.btnAdd.isEnabled = false
 
+            athlete.location = location
+
             val doneOk: (Boolean) -> Unit = { success ->
                 runOnUiThread {
-                    binding.btnAdd.isEnabled = false
-
                     if (success) {
                         setResult(RESULT_OK)
                         finish()
                     } else {
-                        Snackbar.make(
-                            binding.root,
-                            "Save failed (check Firestore rules/internet)",
-                            Snackbar.LENGTH_LONG
-                        ).show()
+                        Snackbar.make(binding.root, "Save failed", Snackbar.LENGTH_LONG).show()
+                        binding.btnAdd.isEnabled = true
                     }
                 }
             }
+
+            binding.btnAdd.isEnabled = false
+
+            if (isEdit) {
+                app.athletes.update(athlete) { success ->
+                    doneOk(success)
+                }
+            } else {
+                app.athletes.create(athlete) { success ->
+                    doneOk(success)
+                }
+            }
+
         }
     }
 
@@ -256,4 +293,26 @@ class AthleteActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
+    private fun registerMapCallback() {
+        mapIntentLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                when (result.resultCode) {
+                    RESULT_OK -> {
+                        if (result.data != null) {
+                            i("Got Location ${result.data.toString()}")
+
+                            location =
+                                result.data!!.extras?.getParcelable<Location>("location")!!
+                            athlete.location = location
+                        }
+                    }
+                    RESULT_CANCELED -> { }
+                    else -> { }
+                }
+            }
+    }
+
+
+
 }
