@@ -1,4 +1,4 @@
-keys.xml
+app/src/main/res/values/keys.xml
 
 # Built application files
 *.apk
