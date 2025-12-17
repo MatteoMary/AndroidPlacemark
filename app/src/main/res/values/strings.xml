@@ -8,4 +8,7 @@
     <string name="menu_cancelAthlete">Cancel</string>
     <string name="err_enter_name">Please enter a name</string>
     <string name="role">Role</string>
+    <string name="button_location">Find nearest Track</string>
+    <string name="title_activity_map">MapActivity</string>
+
 </resources>
