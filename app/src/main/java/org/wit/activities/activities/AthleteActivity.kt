@@ -189,8 +189,6 @@ class AthleteActivity : AppCompatActivity() {
 
                 binding.btnAdd.isEnabled = false
 
-            athlete.location = location
-
             val doneOk: (Boolean) -> Unit = { success ->
                 runOnUiThread {
                     if (success) {
@@ -203,18 +201,11 @@ class AthleteActivity : AppCompatActivity() {
                 }
             }
 
-            binding.btnAdd.isEnabled = false
-
             if (isEdit) {
                 app.athletes.update(athlete) { success ->
                     doneOk(success)
                 }
-            } else {
-                app.athletes.create(athlete) { success ->
-                    doneOk(success)
-                }
             }
-
         }
     }
 
